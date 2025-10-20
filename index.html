@@ -356,10 +356,30 @@ button:active {
 footer {
   margin-top: 30px;
   padding: 20px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: white;
   text-align: center;
   opacity: 0.9;
+}
+
+footer a {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(135deg, #fd79a8, #6c5ce7);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+footer a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, #6c5ce7, #fd79a8);
 }
 
 /* Анимация выбора */
@@ -503,6 +523,21 @@ footer {
   background: var(--draw-color);
   color: white;
 }
+/* Для текущего активного состояния с усиленной анимацией */
+.state.current {
+  animation: pulse-current 1s infinite;
+  box-shadow: 0 0 20px 5px rgba(108, 92, 231, 0.6), 0 0 40px 10px rgba(108, 92, 231, 0.3);
+}
+
+@keyframes pulse-current {
+  0% { transform: scale(1); opacity: 1; }
+  25% { transform: scale(1.15); opacity: 0.9; }
+  50% { transform: scale(1.25); opacity: 0.7; }
+  75% { transform: scale(1.15); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+
 </style>
 </head>
 <body>
@@ -571,6 +606,9 @@ footer {
 
 <footer>
   <p>Работу выполнил Стриго Александр Дмитриевич ИУ6-23БВ</p>
+  <p>
+    Ссылка на работу и расчеты <a href="game.pdf" target="_blank">Скачать</a>
+  </p>
 </footer>
 
 <script>
@@ -648,25 +686,31 @@ function step() {
   const next = getNextState(a, b);
 
   // Анимация выбора
-  document.getElementById("a").parentElement.classList.add('choice-animation');
-  document.getElementById("b").parentElement.classList.add('choice-animation');
+  const playerA = document.getElementById("a").parentElement;
+  const playerB = document.getElementById("b").parentElement;
+  playerA.classList.add('choice-animation');
+  playerB.classList.add('choice-animation');
   setTimeout(() => {
-    document.getElementById("a").parentElement.classList.remove('choice-animation');
-    document.getElementById("b").parentElement.classList.remove('choice-animation');
+    playerA.classList.remove('choice-animation');
+    playerB.classList.remove('choice-animation');
   }, 600);
 
-  // Обновление состояний
-  document.getElementById("s0").classList.remove("active");
-  document.getElementById("s1").classList.remove("active");
-  document.getElementById("s2").classList.remove("active");
-  
+  // Снимаем подсветку со всех состояний
+  document.querySelectorAll('.state').forEach(s => {
+    s.classList.remove("active");
+    s.classList.remove("current");
+  });
+
   // Задержка для плавного перехода
   setTimeout(() => {
-    document.getElementById(next).classList.add("active");
+    const stateEl = document.getElementById(next);
+    stateEl.classList.add("active");
+    stateEl.classList.add("current"); // Добавляем красивую анимацию подсветки
   }, 300);
 
+  // Текст результата
   let resultText = next === "s0" ? "Ничья" : (next === "s1" ? "Победил игрок A" : "Победил игрок B");
-  
+
   // Анимация результата
   const resultElement = document.getElementById("result");
   resultElement.classList.remove('show-animation');
@@ -682,6 +726,7 @@ function step() {
 
   currentState = next;
 }
+
 </script>
 </body>
 </html>
